@@ -44,7 +44,7 @@ const Index = () => {
               <BookOpen className="h-6 w-6 text-primary-foreground" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              NCERT Learn
+              THINK 2 TEACH AI
             </span>
           </div>
           <Link to="/auth">
@@ -180,10 +180,10 @@ const Index = () => {
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <BookOpen className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-foreground">NCERT Learn</span>
+            <span className="font-semibold text-foreground">THINK 2 TEACH AI</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            © 2026 NCERT Learn. Made with ❤️ for Indian students.
+            © 2026 THINK 2 TEACH AI. Made with ❤️ for Indian students.
           </p>
         </div>
       </footer>
