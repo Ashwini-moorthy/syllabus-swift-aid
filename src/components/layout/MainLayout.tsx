@@ -51,7 +51,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <GraduationCap className="h-6 w-6" />
               </div>
               <span className="font-display text-xl font-bold text-foreground">
-                NCERT Learn
+                THINK 2 TEACH AI
               </span>
             </Link>
 
