@@ -114,10 +114,28 @@ export function TopicQuiz({ topicId, topicName, grade }: TopicQuizProps) {
     // Save result to database
     if (user) {
       try {
+        // First create a test record for this generated quiz
+        const { data: testData, error: testError } = await supabase.from('tests').insert({
+          title: `Practice Quiz: ${topicName}`,
+          topic_id: topicId,
+          questions: questions.map((q, idx) => ({
+            question: q.question,
+            options: q.options,
+            correct: q.correct,
+            explanation: q.explanation,
+          })),
+        }).select('id').single();
+
+        if (testError) {
+          console.error('Failed to create test record:', testError);
+          return;
+        }
+
+        // Then save the test result with the test_id
         await supabase.from('test_results').insert({
           user_id: user.id,
           topic_id: topicId,
-          test_id: null, // Generated quiz, no specific test_id
+          test_id: testData.id,
           score,
           total_questions: questions.length,
           performance,
