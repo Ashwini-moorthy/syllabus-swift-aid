@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Youtube, ExternalLink, PlayCircle, Search, X } from 'lucide-react';
 
 interface Video {
@@ -141,21 +141,22 @@ export function YouTubeVideos({ videos, topicName }: YouTubeVideosProps) {
       {/* Video Player Modal */}
       <Dialog open={!!selectedVideo} onOpenChange={() => closeVideoModal()}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden">
-          <DialogHeader className="p-4 pb-0">
-            <DialogTitle className="pr-8 line-clamp-1">{selectedVideo?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="aspect-video w-full">
+          <div className="p-4 pb-0">
+            <h3 className="font-semibold text-lg pr-8 line-clamp-1">{selectedVideo?.title}</h3>
+          </div>
+          <div className="aspect-video w-full bg-black">
             {selectedVideo && getYouTubeVideoId(selectedVideo.url) && (
               <iframe
-                src={`https://www.youtube.com/embed/${getYouTubeVideoId(selectedVideo.url)}?autoplay=1`}
+                src={`https://www.youtube.com/embed/${getYouTubeVideoId(selectedVideo.url)}?autoplay=1&rel=0&modestbranding=1`}
                 title={selectedVideo.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
-                className="w-full h-full"
+                className="w-full h-full border-0"
+                referrerPolicy="strict-origin-when-cross-origin"
               />
             )}
           </div>
-          <div className="p-4 pt-0 flex justify-between items-center">
+          <div className="p-4 pt-2 flex justify-between items-center">
             <a
               href={selectedVideo?.url}
               target="_blank"
