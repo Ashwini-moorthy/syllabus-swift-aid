@@ -20,7 +20,6 @@ import { AIChatPanel } from '@/components/chat/AIChatPanel';
 import { TopicQuiz } from '@/components/quiz/TopicQuiz';
 import { TopicContent } from '@/components/learning/TopicContent';
 import { StreakDisplay } from '@/components/streak/StreakDisplay';
-import { useStreak } from '@/hooks/useStreak';
 
 export default function TopicPage() {
   const { topicId } = useParams();
@@ -28,7 +27,6 @@ export default function TopicPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { recordActivity } = useStreak();
   const [activeTab, setActiveTab] = useState(searchParams.get('chat') === 'true' ? 'chat' : 'learn');
 
   // Fetch topic details
@@ -85,9 +83,6 @@ export default function TopicPage() {
         });
       
       if (error) throw error;
-      
-      // Record activity for streak
-      recordActivity.mutate();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['topic-progress'] });
