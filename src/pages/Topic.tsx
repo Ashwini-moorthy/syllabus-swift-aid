@@ -1,33 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   ArrowLeft, 
   BookOpen, 
   MessageCircle, 
-  Youtube, 
   CheckCircle2,
-  Volume2,
-  VolumeX,
-  Send,
   Loader2,
-  GraduationCap,
-  User,
   ClipboardList
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { AIChatPanel } from '@/components/chat/AIChatPanel';
-import { YouTubeVideos } from '@/components/learning/YouTubeVideos';
 import { TopicQuiz } from '@/components/quiz/TopicQuiz';
+import { TopicContent } from '@/components/learning/TopicContent';
+import { StreakDisplay } from '@/components/streak/StreakDisplay';
+import { useStreak } from '@/hooks/useStreak';
 
 export default function TopicPage() {
   const { topicId } = useParams();
@@ -35,6 +28,7 @@ export default function TopicPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { recordActivity } = useStreak();
   const [activeTab, setActiveTab] = useState(searchParams.get('chat') === 'true' ? 'chat' : 'learn');
 
   // Fetch topic details
@@ -91,6 +85,9 @@ export default function TopicPage() {
         });
       
       if (error) throw error;
+      
+      // Record activity for streak
+      recordActivity.mutate();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['topic-progress'] });
@@ -136,9 +133,12 @@ export default function TopicPage() {
           <p className="text-muted-foreground mt-2">{topic?.description}</p>
         </div>
 
+        {/* Streak Display */}
+        <StreakDisplay />
+
         {/* Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
             <TabsTrigger value="learn" className="gap-2">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Learn</span>
@@ -146,10 +146,6 @@ export default function TopicPage() {
             <TabsTrigger value="chat" className="gap-2">
               <MessageCircle className="h-4 w-4" />
               <span className="hidden sm:inline">AI Tutor</span>
-            </TabsTrigger>
-            <TabsTrigger value="videos" className="gap-2">
-              <Youtube className="h-4 w-4" />
-              <span className="hidden sm:inline">Videos</span>
             </TabsTrigger>
             <TabsTrigger value="quiz" className="gap-2">
               <ClipboardList className="h-4 w-4" />
@@ -159,13 +155,10 @@ export default function TopicPage() {
 
           {/* Learn Tab */}
           <TabsContent value="learn" className="space-y-4">
-            <Card>
-              <CardContent className="p-6 prose prose-slate max-w-none">
-                <div className="whitespace-pre-wrap text-lg leading-relaxed">
-                  {topic?.content || 'Content is being prepared for this topic.'}
-                </div>
-              </CardContent>
-            </Card>
+            <TopicContent 
+              content={topic?.content || null} 
+              topicName={topic?.name || ''} 
+            />
 
             {!isCompleted && (
               <Button
@@ -193,11 +186,6 @@ export default function TopicPage() {
               subjectName={topic?.chapter?.subject?.name || ''}
               grade={profile?.grade || 6}
             />
-          </TabsContent>
-
-          {/* Videos Tab */}
-          <TabsContent value="videos">
-            <YouTubeVideos videos={(topic?.youtube_videos as Array<{title: string; url: string; thumbnail?: string}>) || []} topicName={topic?.name || ''} />
           </TabsContent>
 
           {/* Quiz Tab */}
