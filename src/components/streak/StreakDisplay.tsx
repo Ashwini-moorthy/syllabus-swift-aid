@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Flame, Calendar, Trophy } from 'lucide-react';
+import { Flame, Trophy } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
 
 export function StreakDisplay() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const hasShownReminder = useRef(false);
 
   // Fetch streak data from profiles
   const { data: streakData } = useQuery({
@@ -67,15 +70,27 @@ export function StreakDisplay() {
     },
   });
 
-  // Update streak when user logs in for the day
+  // Show streak at risk reminder before updating
   useEffect(() => {
-    if (user && streakData !== undefined) {
+    if (user && streakData !== undefined && !hasShownReminder.current) {
       const today = new Date().toISOString().split('T')[0];
+      const isAtRisk = streakData?.last_activity_date !== today && (streakData?.current_streak || 0) > 0;
+      
+      if (isAtRisk) {
+        hasShownReminder.current = true;
+        toast({
+          title: `🔥 Your ${streakData?.current_streak}-day streak is at risk!`,
+          description: "Complete any learning activity today to keep your streak alive.",
+          duration: 6000,
+        });
+      }
+      
+      // Update streak after showing reminder
       if (streakData?.last_activity_date !== today) {
         updateStreak.mutate();
       }
     }
-  }, [user, streakData]);
+  }, [user, streakData, toast]);
 
   const currentStreak = streakData?.current_streak || 0;
   const longestStreak = streakData?.longest_streak || 0;
