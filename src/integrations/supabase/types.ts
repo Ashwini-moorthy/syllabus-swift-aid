@@ -87,12 +87,42 @@ export type Database = {
           },
         ]
       }
+      daily_activity: {
+        Row: {
+          activity_date: string
+          created_at: string
+          id: string
+          time_spent_seconds: number | null
+          topics_completed: number | null
+          user_id: string
+        }
+        Insert: {
+          activity_date?: string
+          created_at?: string
+          id?: string
+          time_spent_seconds?: number | null
+          topics_completed?: number | null
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          created_at?: string
+          id?: string
+          time_spent_seconds?: number | null
+          topics_completed?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
+          current_streak: number | null
           grade: number
           id: string
+          last_activity_date: string | null
+          longest_streak: number | null
           name: string
           updated_at: string
           user_id: string
@@ -100,8 +130,11 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          current_streak?: number | null
           grade: number
           id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
           name: string
           updated_at?: string
           user_id: string
@@ -109,8 +142,11 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          current_streak?: number | null
           grade?: number
           id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
           name?: string
           updated_at?: string
           user_id?: string
