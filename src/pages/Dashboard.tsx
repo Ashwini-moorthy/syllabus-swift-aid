@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Calculator, Atom, Globe, BookOpen, ArrowRight, Trophy, Clock, Target } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-
+import { StreakDisplay } from '@/components/streak/StreakDisplay';
 const subjectIcons: Record<string, any> = {
   Calculator,
   Atom,
@@ -126,6 +125,9 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Streak Display */}
+        <StreakDisplay />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

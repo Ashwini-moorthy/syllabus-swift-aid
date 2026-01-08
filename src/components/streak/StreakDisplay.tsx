@@ -25,7 +25,7 @@ export function StreakDisplay() {
     enabled: !!user,
   });
 
-  // Check and update streak on load
+  // Check and update streak on daily login
   const updateStreak = useMutation({
     mutationFn: async () => {
       if (!user) return;
@@ -46,15 +46,11 @@ export function StreakDisplay() {
       if (lastActivity === yesterdayStr) {
         newStreak = (streakData?.current_streak || 0) + 1;
       }
-      // If last activity was today, keep current streak
-      else if (lastActivity === today) {
-        return;
-      }
-      // Otherwise, streak resets to 1
+      // Otherwise, streak resets to 1 (new day after gap)
       
       const longestStreak = Math.max(newStreak, streakData?.longest_streak || 0);
       
-      // Update profile
+      // Update profile with new streak
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
@@ -65,23 +61,13 @@ export function StreakDisplay() {
         .eq('user_id', user.id);
       
       if (profileError) throw profileError;
-      
-      // Log daily activity
-      const { error: activityError } = await supabase
-        .from('daily_activity')
-        .upsert({
-          user_id: user.id,
-          activity_date: today,
-          topics_completed: 0,
-        });
-      
-      if (activityError) throw activityError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['streak'] });
     },
   });
 
+  // Update streak when user logs in for the day
   useEffect(() => {
     if (user && streakData !== undefined) {
       const today = new Date().toISOString().split('T')[0];
