@@ -195,7 +195,7 @@ export function AIChatPanel({ topicId, topicName, chapterName, subjectName, grad
             <div>
               <CardTitle className="text-lg">AI Tutor</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {isTeacherMode ? 'Teacher Mode - Explains concepts' : 'Student Mode - Tests your understanding'}
+                {isTeacherMode ? 'Teacher Mode - Explains concepts' : 'Student Mode - Teach back & get feedback'}
               </p>
             </div>
           </div>
@@ -223,37 +223,58 @@ export function AIChatPanel({ topicId, topicName, chapterName, subjectName, grad
           {messages.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="font-medium">Start a conversation!</p>
+              <p className="font-medium">
+                {isTeacherMode ? 'Start a conversation!' : 'Teach-Back Mode'}
+              </p>
               <p className="text-sm mt-1">
                 {isTeacherMode 
                   ? 'Ask me anything about this topic and I\'ll explain it step by step.'
-                  : 'I\'ll ask you questions to test your understanding.'}
+                  : 'Explain this concept in your own words. I\'ll evaluate your understanding and help fill any gaps.'}
               </p>
-              {isTeacherMode && (
-                <div className="mt-4 flex flex-wrap justify-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInput('Explain this topic in simple terms')}
-                  >
-                    Explain simply
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInput('Give me an example')}
-                  >
-                    Give example
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInput('Why is this important?')}
-                  >
-                    Why important?
-                  </Button>
-                </div>
-              )}
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {isTeacherMode ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInput('Explain this topic in simple terms')}
+                    >
+                      Explain simply
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInput('Give me an example')}
+                    >
+                      Give example
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInput('Why is this important?')}
+                    >
+                      Why important?
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInput('Let me explain this topic to you...')}
+                    >
+                      Start teaching
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInput('I think this concept means...')}
+                    >
+                      Share my understanding
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           )}
 
@@ -315,7 +336,7 @@ export function AIChatPanel({ topicId, topicName, chapterName, subjectName, grad
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={isTeacherMode ? 'Ask a question...' : 'Type your answer...'}
+            placeholder={isTeacherMode ? 'Ask a question...' : 'Explain the concept in your own words...'}
             disabled={isLoading}
             className="flex-1"
           />
