@@ -73,19 +73,42 @@ export default function TopicPage() {
     mutationFn: async () => {
       if (!user || !topicId) return;
       
-      const { error } = await supabase
+      // Check if progress exists
+      const { data: existing } = await supabase
         .from('student_progress')
-        .upsert({
-          user_id: user.id,
-          topic_id: topicId,
-          completed: true,
-          completed_at: new Date().toISOString(),
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('topic_id', topicId)
+        .maybeSingle();
       
-      if (error) throw error;
+      if (existing) {
+        // Update existing
+        const { error } = await supabase
+          .from('student_progress')
+          .update({
+            completed: true,
+            completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id);
+        if (error) throw error;
+      } else {
+        // Insert new
+        const { error } = await supabase
+          .from('student_progress')
+          .insert({
+            user_id: user.id,
+            topic_id: topicId,
+            completed: true,
+            completed_at: new Date().toISOString(),
+          });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['topic-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['topic-progress-single', user?.id, topicId] });
+      queryClient.invalidateQueries({ queryKey: ['all-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['student-progress'] });
       toast({
         title: 'Topic Completed! 🎉',
         description: 'Great job! Keep up the excellent work.',
