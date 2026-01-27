@@ -15,12 +15,13 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Roboto',
+  				'Poppins',
   				'ui-sans-serif',
   				'system-ui',
   				'-apple-system',
   				'BlinkMacSystemFont',
   				'Segoe UI',
+  				'Roboto',
   				'Helvetica Neue',
   				'Arial',
   				'Noto Sans',
@@ -32,7 +33,7 @@ export default {
   				'sans-serif'
   			],
   			serif: [
-  				'Libre Caslon Text',
+  				'Merriweather',
   				'ui-serif',
   				'Georgia',
   				'Cambria',
@@ -41,7 +42,7 @@ export default {
   				'serif'
   			],
   			mono: [
-  				'Roboto Mono',
+  				'JetBrains Mono',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
