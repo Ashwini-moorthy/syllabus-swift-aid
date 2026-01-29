@@ -13,6 +13,7 @@ import Subject from "./pages/Subject";
 import Chapter from "./pages/Chapter";
 import Topic from "./pages/Topic";
 import Progress from "./pages/Progress";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/chapters/:chapterId" element={<ProtectedRoute><Chapter /></ProtectedRoute>} />
             <Route path="/topics/:topicId" element={<ProtectedRoute><Topic /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
