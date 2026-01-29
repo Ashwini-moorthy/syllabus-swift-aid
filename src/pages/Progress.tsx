@@ -19,9 +19,11 @@ export default function ProgressPage() {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!user,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   const { data: progress } = useQuery({
@@ -34,9 +36,11 @@ export default function ProgressPage() {
         .eq('user_id', user.id)
         .eq('completed', true);
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!user,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   const totalTopics = progress?.length || 0;
