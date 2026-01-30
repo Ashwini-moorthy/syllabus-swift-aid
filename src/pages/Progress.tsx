@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Trophy, Target, TrendingUp, BookOpen } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { QuizHistory } from '@/components/progress/QuizHistory';
 
 export default function ProgressPage() {
   const { user, profile } = useAuth();
@@ -15,7 +16,18 @@ export default function ProgressPage() {
       if (!user) return [];
       const { data, error } = await supabase
         .from('test_results')
-        .select('*')
+        .select(`
+          *,
+          topic:topics(
+            id,
+            name,
+            chapter:chapters(
+              id,
+              name,
+              subject:subjects(id, name, color)
+            )
+          )
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -144,6 +156,9 @@ export default function ProgressPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Quiz History */}
+        <QuizHistory results={testResults || []} />
       </div>
     </MainLayout>
   );
