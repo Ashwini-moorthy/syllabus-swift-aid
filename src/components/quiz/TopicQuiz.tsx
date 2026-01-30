@@ -16,6 +16,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Question {
   question: string;
@@ -41,6 +42,7 @@ export function TopicQuiz({ topicId, topicName, grade }: TopicQuizProps) {
   const [showExplanation, setShowExplanation] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const generateQuiz = async () => {
     setIsGenerating(true);
@@ -128,11 +130,16 @@ export function TopicQuiz({ topicId, topicName, grade }: TopicQuizProps) {
 
         if (testError) {
           console.error('Failed to create test record:', testError);
+          toast({
+            title: 'Error saving quiz',
+            description: 'Failed to save your quiz results.',
+            variant: 'destructive',
+          });
           return;
         }
 
         // Then save the test result with the test_id
-        await supabase.from('test_results').insert({
+        const { error: resultError } = await supabase.from('test_results').insert({
           user_id: user.id,
           topic_id: topicId,
           test_id: testData.id,
@@ -145,6 +152,26 @@ export function TopicQuiz({ topicId, topicName, grade }: TopicQuizProps) {
             correct: questions[idx].correct,
             isCorrect: ans === questions[idx].correct,
           })),
+        });
+
+        if (resultError) {
+          console.error('Failed to save result:', resultError);
+          toast({
+            title: 'Error saving results',
+            description: 'Failed to save your test results.',
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        // Invalidate queries so Progress and Dashboard update
+        queryClient.invalidateQueries({ queryKey: ['test-results'] });
+        queryClient.invalidateQueries({ queryKey: ['all-test-results'] });
+        queryClient.invalidateQueries({ queryKey: ['profile-test-results'] });
+
+        toast({
+          title: 'Quiz completed!',
+          description: `Your score: ${score}/${questions.length} (${Math.round(percentage)}%)`,
         });
       } catch (error) {
         console.error('Failed to save result:', error);
