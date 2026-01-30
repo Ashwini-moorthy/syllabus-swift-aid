@@ -77,16 +77,6 @@ const Index = () => {
             Learn at your own pace with our intelligent learning companion.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth">
-              <Button size="lg" className="rounded-full px-8 py-6 text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
-                Start Learning Now
-              </Button>
-            </Link>
-            <Button variant="outline" size="lg" className="rounded-full px-8 py-6 text-lg">
-              Watch Demo
-            </Button>
-          </div>
         </div>
       </section>
 
