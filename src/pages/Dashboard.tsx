@@ -62,6 +62,8 @@ export default function Dashboard() {
       return data;
     },
     enabled: !!user,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   // Fetch test results
@@ -79,6 +81,8 @@ export default function Dashboard() {
       return data;
     },
     enabled: !!user,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   // Calculate subject progress
